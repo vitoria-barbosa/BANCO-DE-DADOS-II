@@ -123,13 +123,7 @@ ORDER BY(valor_dia) DESC
 LIMIT 1;
 
 -- 26. O nome dos hóspedes que nunca se hospedaram no apartamento 201.
-SELECT ho.nome FROM HOSPEDAGEM h 
-JOIN HOSPEDE ho
-ON h.cod_hosp = ho.cod_hosp
-JOIN APTO a
-ON h.num_quarto = a.num
-JOIN CATEGORIA c
-ON a.cod_cat = c.cod_cat
+SELECT nome FROM HOSPEDE
 EXCEPT
 SELECT ho.nome FROM HOSPEDAGEM h 
 JOIN HOSPEDE ho
@@ -141,13 +135,7 @@ ON a.cod_cat = c.cod_cat
 WHERE h.num_quarto = 201;
 
 -- 27. O nome dos hóspedes que nunca se hospedaram em apartamentos da categoria LUXO.
-SELECT ho.nome FROM HOSPEDAGEM h 
-JOIN HOSPEDE ho
-ON h.cod_hosp = ho.cod_hosp
-JOIN APTO a
-ON h.num_quarto = a.num
-JOIN CATEGORIA c
-ON a.cod_cat = c.cod_cat
+SELECT nome FROM HOSPEDE
 EXCEPT
 SELECT ho.nome FROM HOSPEDAGEM h 
 JOIN HOSPEDE ho
