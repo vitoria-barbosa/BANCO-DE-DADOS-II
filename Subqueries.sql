@@ -84,10 +84,10 @@ FROM HOSPEDE GROUP BY nacionalidade
 HAVING nacionalidade IS NOT NULL; 
 
 -- 20. A data de nascimento do hóspede mais velho.
-SELECT dt_nasc FROM HOSPEDE WHERE dt_nasc = (SELECT MIN(dt_nasc) FROM HOSPEDE);
+SELECT MIN(dt_nasc) FROM HOSPEDE;
 
 -- 21. A data de nascimento do hóspede mais novo.
-SELECT dt_nasc FROM HOSPEDE WHERE dt_nasc = (SELECT MAX(dt_nasc) FROM HOSPEDE);
+SELECT MAX(dt_nasc) FROM HOSPEDE;
 
 -- 22. Reajuste em 10% o valor das diárias das categorias.
 UPDATE CATEGORIA SET valor_dia = valor_dia * 1.1;

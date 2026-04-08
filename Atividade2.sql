@@ -13,16 +13,16 @@ ON a.cod_cat = c.cod_cat
 ORDER BY valor_dia DESC;
 
 --4. Categorias que possuem apenas um apartamento.
-SELECT * FROM CATEGORIA c
-JOIN (SELECT c.cod_cat, COUNT(num) AS qtd_apto FROM
+SELECT c.cod_cat, nome FROM
 CATEGORIA c JOIN APTO a
 ON a.cod_cat = c.cod_cat
-GROUP BY c.cod_cat) AS t
-ON c.cod_cat = t.cod_cat
-WHERE qtd_apto = 1;
+GROUP BY c.cod_cat, nome
+HAVING COUNT(NUM) = 1;
 
 --5. Listagem dos nomes dos hóspedes brasileiros com mês e ano de nascimento, por ordem decrescente de idade e por ordem crescente de nome do hóspede.
-SELECT nome FROM HOSPEDE WHERE NACIONALIDADE ILIKE 'BRASILEIR_' ORDER BY DT_NASC, NOME;
+SELECT nome, EXTRACT(MONTH FROM DT_NASC) mes_nasc, EXTRACT(YEAR FROM DT_NASC) ano_nasc
+FROM HOSPEDE WHERE NACIONALIDADE ILIKE 'BRASILEIR_' 
+ORDER BY DT_NASC, NOME;
 
 --6. Listagem com 3 colunas, nome do hóspede, número do apartamento e quantidade (número de vezes que aquele hóspede se hospedou naquele apartamento), em ordem decrescente de quantidade.
 SELECT H.NOME, HO.NUM_QUARTO, COUNT(*) AS QTD_VEZES
@@ -68,12 +68,12 @@ ORDER BY NOME, NUM;
 SELECT NOME FROM FUNCIONARIO WHERE COD_FUNC IN 
 (SELECT COD_FUNC FROM HOSPEDAGEM NATURAL JOIN HOSPEDE WHERE NOME ILIKE 'JOÃO')
 OR COD_FUNC IN(SELECT COD_FUNC FROM RESERVA NATURAL JOIN HOSPEDE WHERE NOME ILIKE 'JOÃO')
-OR COD_FUNC IN (SELECT COD_FUNC FROM HOSPEDAGEM HO JOIN APTO A
-ON HO.NUM_QUARTO = A.NUM JOIN CATEGORIA C
-ON A.COD_CAT = C.COD_CAT WHERE NOME ILIKE 'LUXO')
-OR COD_FUNC IN (SELECT COD_FUNC FROM RESERVA R JOIN APTO A
-ON R.NUM_QUARTO = A.NUM JOIN CATEGORIA C
-ON A.COD_CAT = C.COD_CAT WHERE NOME ILIKE 'LUXO');
+OR COD_FUNC IN (SELECT COD_FUNC FROM HOSPEDAGEM WHERE NUM_QUARTO IN
+(SELECT NUM FROM APTO WHERE COD_CAT IN 
+(SELECT COD_CAT FROM CATEGORIA WHERE NOME ILIKE 'LUXO')))
+OR COD_FUNC IN (SELECT COD_FUNC FROM RESERVA WHERE NUM_QUARTO IN
+(SELECT NUM FROM APTO WHERE COD_CAT IN 
+(SELECT COD_CAT FROM CATEGORIA WHERE NOME ILIKE 'LUXO')))
 
 --15. O código das hospedagens realizadas pelo hóspede mais velho que se hospedou no apartamento mais caro.
 SELECT COD_HOSPEDAGEM FROM HOSPEDAGEM WHERE COD_HOSP =
@@ -90,7 +90,7 @@ ON H1.DT_NASC = H2.DT_NASC
 WHERE H2.COD_HOSP = 2
 AND H1.COD_HOSP <> 2;
 
---17. O nome do hóspede mais velho que se hospedou na categoria mais cara mo ano de 2026.
+--17. O nome do hóspede mais velho que se hospedou na categoria mais cara no ano de 2026.
 CREATE VIEW HOSPEDAGENS2026 AS
 SELECT HO.NOME, DT_NASC, VALOR_DIA
 FROM HOSPEDE HO JOIN HOSPEDAGEM H 
